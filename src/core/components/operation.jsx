@@ -88,7 +88,8 @@ export default class Operation extends PureComponent {
     let parameters = getList(operation, ["parameters"])
     let operationScheme = specSelectors.operationScheme(path, method)
     let isShownKey = ["operations", tag, operationId]
-    let extensions = getExtensions(operation)
+    let allExtensions = getExtensions(operation)
+    let { extensions, permissions } = fn.permissionsFromExtensions(allExtensions)
 
     const Responses = getComponent("responses", true)
     const Parameters = getComponent( "parameters", true )
@@ -101,6 +102,8 @@ export default class Operation extends PureComponent {
     const OperationExt = getComponent( "OperationExt" )
     const OperationSummary = getComponent( "OperationSummary" )
     const Link = getComponent( "Link" )
+
+    const OperationPermissions = getComponent("OperationPermissions")
 
     const { showExtensions } = getConfigs()
 
@@ -129,6 +132,9 @@ export default class Operation extends PureComponent {
                     <Markdown source={ description } />
                   </div>
                 </div>
+              }
+              {
+                <OperationPermissions permissions={ permissions } getComponent={ getComponent } />
               }
               {
                 externalDocsUrl ?

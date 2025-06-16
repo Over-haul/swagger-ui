@@ -38,6 +38,15 @@ const baseRules = [
     test: /\.(png|jpg|jpeg|gif)$/,
     type: "asset/inline",
   },
+  {
+    test: /\.css$/,
+    use: [
+      {
+        loader: "css-loader",
+        options: { sourceMap: true },
+      }
+    ]
+  }
 ]
 
 function buildConfig(

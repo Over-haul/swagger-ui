@@ -1,4 +1,13 @@
 docker-run.sh text eol=lf
-/dist/*.map export-ignore
 /test export-ignore
 /docs export-ignore
+
+# Ignore generated files in diffs
+/dist/*.map export-ignore
+/dist/oh-bundle.js -diff linguist-generated=true
+/dist/operation-permissions-plugin.js -diff linguist-generated=true
+/dist/swagger-ui-bundle.js -diff linguist-generated=true
+/dist/swagger-ui-es-bundle-core.js -diff linguist-generated=true
+/dist/swagger-ui-es-bundle.js -diff linguist-generated=true
+/dist/swagger-ui-standalone-preset.js -diff linguist-generated=true
+/dist/swagger-ui.js -diff linguist-generated=true

@@ -23,6 +23,7 @@
   @include meta.load-css("errors");
   @include meta.load-css("split-pane-mode");
   @include meta.load-css("markdown");
+  @include meta.load-css("operation-permissions");
   @include meta.load-css("../core/plugins/json-schema-2020-12/components/all");
   @include meta.load-css("../core/plugins/oas31/components/all");
 }

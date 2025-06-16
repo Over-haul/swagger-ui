@@ -4,7 +4,32 @@ on:
     branches:
       - master
       - OK-49577-user-permissions-component
+permissions:
+  contents: write # pushing tags, releases
 jobs:
+  lint-test:
+    name: Run linters and tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run linters and tests
+        run: npm run test
+
   release:
     name: Release oh swagger-ui
     runs-on: ubuntu-latest
@@ -13,8 +38,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          persist-credentials: false
-          ref: master
+          fetch-tags: true
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -28,20 +52,24 @@ jobs:
 
       - name: Prepare for the Release
         run: |
-          npm run test
           npm run build
+          rm -f ./dist/*.txt ./dist/*.json ./dist/*.map
+          tar -C dist/ -cvf dist.tar .
 
       - name: Release
         run: |
-          base_version="$(git log -n1 --color --no-walk --tags='v5*' --pretty=format:'%d' | grep -oE '(v[0-9]+\.[0-9]+\.[0-9]+[aA0-zZ9.+-]*)')"
+          git remote add upstream https://github.com/swagger-api/swagger-ui
+          git fetch upstream --tags
+          base_version="$(git log --color --no-walk --tags='v5*' --pretty=format:'%d' | grep -oE '(v[0-9]+\.[0-9]+\.[0-9]+[aA0-zZ9.+-]*)' | grep -v -E '\+[a0-z9]+$' | head -n1)"
+          git remote remove upstream
           if test -z "$base_version"; then
             echo "Error defining base release version" >/dev/stderr
             exit 1
           fi
           short_sha="$(git rev-parse --short HEAD)"
           version="${base_version}+${short_sha}"
-          gh release create "${version}" --target ${{ github.sha }} --generate-notes ${PRE_RELEASE_FLAG}
-        with:
+          gh release create "${version}" --target ${{ github.sha }} --generate-notes ${PRE_RELEASE_FLAG} ./dist.tar
+        env:
           GH_TOKEN: ${{ github.token }}
           PRE_RELEASE_FLAG: ${{ github.ref_name != 'master' && ' --prerelease' || '' }}
 
