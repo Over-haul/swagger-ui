@@ -1,0 +1,52 @@
+name: Release oh SwaggerUI
+on:
+  workflow_dispatch:
+    branches:
+      - master
+      - OK-49577-user-permissions-component
+jobs:
+  release:
+    name: Release oh swagger-ui
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+          ref: master
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Prepare for the Release
+        run: |
+          npm run test
+          npm run build
+
+      - name: Release
+        run: |
+          base_version="$(git log -n1 --color --no-walk --tags='v5*' --pretty=format:'%d' | grep -oE '(v[0-9]+\.[0-9]+\.[0-9]+[aA0-zZ9.+-]*)')"
+          if test -z "$base_version"; then
+            echo "Error defining base release version" >/dev/stderr
+            exit 1
+          fi
+          short_sha="$(git rev-parse --short HEAD)"
+          version="${base_version}+${short_sha}"
+          gh release create "${version}" --target ${{ github.sha }} --generate-notes ${PRE_RELEASE_FLAG}
+        with:
+          GH_TOKEN: ${{ github.token }}
+          PRE_RELEASE_FLAG: ${{ github.ref_name != 'master' && ' --prerelease' || '' }}
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: ./dist
