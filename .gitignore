@@ -23,6 +23,7 @@ flavors/**/dist/*
 /es
 dist/log*
 /swagger-ui-*.tgz
+dist/*.js.LICENSE.txt
 
 # Cypress
 test/e2e-cypress/screenshots
