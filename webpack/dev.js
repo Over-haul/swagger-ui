@@ -30,6 +30,7 @@ const devConfig = configBuilder(
         "./src/standalone/presets/standalone/index.js",
       ],
       "swagger-ui": "./src/style/main.scss",
+      "oh-bundle": ["./src/oh/index.js"],
       vendors: ["react-refresh/runtime"],
     },
 
