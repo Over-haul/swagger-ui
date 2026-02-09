@@ -1,9 +1,9 @@
 name: Release oh SwaggerUI
 on:
   workflow_dispatch:
+  push:
     branches:
       - master
-      - OK-49577-user-permissions-component
 permissions:
   contents: write # pushing tags, releases
 jobs:
