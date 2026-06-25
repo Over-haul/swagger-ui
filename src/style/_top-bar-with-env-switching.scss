@@ -1,0 +1,35 @@
+@use "variables" as *;
+
+.topbar {
+  .env-switcher {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-left: 10px;
+
+    .env-switcher__btn {
+      font-size: 13px;
+      font-weight: bold;
+      padding: 4px 10px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 4px;
+      background: transparent;
+      color: rgba(255, 255, 255, 0.6);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+
+      &:hover:not(.env-switcher__btn--active) {
+        border-color: rgba(255, 255, 255, 0.6);
+        color: $topbar-link-font-color;
+      }
+
+      &.env-switcher__btn--active {
+        background: $apple-green;
+        border-color: $apple-green;
+        color: $topbar-link-font-color;
+        cursor: default;
+      }
+    }
+  }
+}
