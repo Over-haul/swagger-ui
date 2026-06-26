@@ -5,7 +5,10 @@ window.onload = function() {
   window["OhBundle"] = window["oh-bundle"]
   // Build a system
   const ui = SwaggerUIBundle({
-    url: "https://petstore.swagger.io/v2/swagger.json",
+    urlsFrom: [
+      { name: "petstore", url: "./specs.json" },
+      { name: "dev", url: "./examples/specs.dev.json" },
+    ],
     dom_id: "#swagger-ui",
     presets: [
       SwaggerUIBundle.presets.apis,
@@ -13,7 +16,8 @@ window.onload = function() {
     ],
     plugins: [
       SwaggerUIBundle.plugins.DownloadUrl,
-      OhBundle.plugins.OperationPermissionsPlugin
+      OhBundle.plugins.OperationPermissionsPlugin,
+      OhBundle.plugins.TopBarWithEnvSwitchingPlugin
     ],
     // requestSnippetsEnabled: true,
     layout: "StandaloneLayout"
